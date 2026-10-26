@@ -149,9 +149,11 @@ For a small shop, one well-built program would often be the better choice. Micro
 └── pom.xml             # parent Maven project
 ```
 
-## Note
+## Limitations
 
-I built this project from the Java backend study guide I wrote for myself, based on a real job ad. I first built it in 2026 on a laptop that later broke, so I rebuilt it and put it here.
+- **The shop is simulated.** There are only three sample products and the payment is pretend (a simple R50,000 limit, not a real card check). I would like to test the design with real traffic and real payment providers.
+- **Not tested under heavy load.** I tested that each failure is handled correctly, but not how the system behaves with thousands of orders at the same time.
+- **No login or security yet** (see "What I would add next").
 
 **Tools:** Java 17 · Spring Boot 3.4 · Spring Cloud (Gateway, Eureka, OpenFeign, Resilience4j) · Spring Data JPA (Java Persistence API, how Java saves objects to a database) · PostgreSQL · H2 · Docker · JUnit 5 · Mockito · Maven
 
