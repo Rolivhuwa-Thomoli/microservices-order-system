@@ -1,0 +1,50 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # Orders go through a circuit breaker
+        - id: order-service
+          uri: lb://order-service          # "lb" = find the service in Eureka
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: orderCircuitBreaker
+                fallbackUri: forward:/fallback/orders
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
+        - id: shipping-service
+          uri: lb://shipping-service
+          predicates:
+            - Path=/api/shipments/**
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      orderCircuitBreaker:
+        sliding-window-size: 10
+        failure-rate-threshold: 50       # open the circuit if half of the last 10 calls fail
+        wait-duration-in-open-state: 30s
+  timelimiter:
+    instances:
+      orderCircuitBreaker:
+        timeout-duration: 5s
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
